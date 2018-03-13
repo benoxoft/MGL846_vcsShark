@@ -1,8 +1,3 @@
-About this repository
-=====================
-The source code is from the replication kit of the paper "Are there any unit tests? An Empirical Study on Unit Testing in Open Source Python Projects" by Fabian Trautsch and Jens Grabowski
-This Github repository does not contain the full replication kit and has possibly been modified to suit my needs.
-The full original replication kit is available at: https://user.informatik.uni-goettingen.de/~ftrauts/replication_kit_01.tar.gz
 
 vcsSHARK
 ========

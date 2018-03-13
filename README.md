@@ -1,4 +1,12 @@
-﻿Replication Kit for the Paper "Are there any Unit Tests? An Empirical Study on Open Source Python Projects"
+﻿About this repository
+=====================
+This Github repository does not contain the full replication kit and has possibly been modified to suit my needs.<br>
+The full original replication kit is available at: <br>`https://user.informatik.uni-goettingen.de/~ftrauts/replication_kit_01.tar.gz`<br>
+
+
+README
+======
+Replication Kit for the Paper "Are there any Unit Tests? An Empirical Study on Open Source Python Projects"
 
 Contents:
 1) Used version of the vcsSHARK
