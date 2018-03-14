@@ -6,7 +6,7 @@ import sys
 
 
 from testimpshark.common import setup_logging, get_all_immidiate_folders
-from testimpshark.evoshark import EvoSHARK
+from testimpshark.testimpshark import TestImpSHARK
 
 
 def writable_dir(prospective_dir):
@@ -75,7 +75,7 @@ def start():
 
     mock_paths = detect_mock_paths(logger)
 
-    evoshark = EvoSHARK(args.output_dir, args.url, args.db_database, args.db_hostname, args.db_port,
+    evoshark = TestImpSHARK(args.output_dir, args.url, args.db_database, args.db_hostname, args.db_port,
                         args.db_authentication, args.db_user, args.db_password, mock_paths)
     evoshark.process_revision(args.rev, args.input)
 if __name__ == "__main__":

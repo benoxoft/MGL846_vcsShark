@@ -7,7 +7,9 @@ from setuptools import setup, find_packages
 # Check dependencies
 deps = ['mongoengine >= 0.10.5',
         'pygit2 == 0.24.0',
-        'pymongo >= 3.2']
+        'pymongo >= 3.2',
+        'modulegraph'
+        ]
 
 setup(name="vcsSHARK",
       version="0.1",
