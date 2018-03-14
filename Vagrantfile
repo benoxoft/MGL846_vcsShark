@@ -70,6 +70,7 @@ Vagrant.configure("2") do |config|
     apt-get install -y git python3-pip python3-cffi libgit2-24 libgit2-dev mongodb-org
     python3.5 /vagrant/vcsSHARK/setup.py install
     service mongod start
+    sleep 1
     mongo admin < /vagrant/setupMongoDB.js
   SHELL
 end
