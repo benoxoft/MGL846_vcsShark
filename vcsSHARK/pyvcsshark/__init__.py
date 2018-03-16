@@ -1,6 +1,4 @@
 import argparse
-import os
-import sys
 from .config import Config
 from .main import Application
 from .utils import *
@@ -8,6 +6,7 @@ import json
 import logging
 import logging.config
 from pyvcsshark.datastores.basestore import BaseStore
+from pycoshark.utils import get_base_argparser
 
 
 def setup_logging(default_path=os.path.dirname(os.path.realpath(__file__))+"/loggerConfiguration.json", 
@@ -25,8 +24,9 @@ def setup_logging(default_path=os.path.dirname(os.path.realpath(__file__))+"/log
             logging.config.dictConfig(config)
         else:
             logging.basicConfig(level=default_level)
-            
-def getDatastoreChoices():
+
+
+def get_datastore_choices():
     """ Helper function that gets all the available datastore choices, so that
     we can check, if the user chooses an available datastore.
     """
@@ -36,45 +36,37 @@ def getDatastoreChoices():
     choices = []
     for sc in BaseStore.__subclasses__():
         datastore = sc()
-        choices.append(datastore.storeIdentifier)
+        choices.append(datastore.store_identifier)
     return choices
         
         
 def start():
     """ Start method to start the program. It first sets up the logging and then parses all the arguments
-    it got from the comandline. If a config file was given, the values in the config file overwrite the ones
-    given on the commandline.
-    
-    .. WARNING::
-       If a configuration file is specified, it will overwrite the values given via the commandline!
+    it got from the commandline.
     """
     
     setup_logging()
     logger = logging.getLogger("main")
-    
-    datastoreChoices = None
+
     try:
-        datastoreChoices = getDatastoreChoices()
+        datastore_choices = get_datastore_choices()
     except Exception as e:
-        logger.error("Failed to instantiate datastore. Original message: %s" % (e))
+        logger.exception("Failed to instantiate datastore")
         sys.exit(1)
         
-    if(not datastoreChoices):
+    if not datastore_choices :
         logger.error("No datastores found! Exiting...")
         sys.exit(1)
-                
-    parser = argparse.ArgumentParser(description='Analyze the given URI. An URI can be a checked out directory. \
-                                                 If URI is omitted, the current working directory will be used as a checked out directory.')
-    parser.add_argument('-v', '--version', help='Shows the version', action='version', version='0.0.1')
-    parser.add_argument('-f', '--config-file', help='Path to a custom configuration file', default=None)
-    parser.add_argument('-D', '--db-driver', help='Output database driver. Currently only mongoDB is supported', default='mongo', choices=datastoreChoices)
-    parser.add_argument('-U', '--db-user', help='Database user name', default='root')
-    parser.add_argument('-P', '--db-password', help='Database user password', default='root')
-    parser.add_argument('-DB', '--db-database', help='Database name', default='smartshark')
-    parser.add_argument('-H', '--db-hostname', help='Name of the host, where the database server is running', default='localhost')
-    parser.add_argument('-p', '--db-port', help='Port, where the database server is listening', default=27017, type=int)
-    parser.add_argument('-a', '--db-authentication', help='Name of the authentication database')
-    parser.add_argument('-u', '--uri', help='Path to the checked out repository directory', default=os.getcwd(), type=readable_dir)
+
+    parser = get_base_argparser('Analyze the given URI. An URI can be a checked out directory. If URI is omitted, '
+                                'the current working directory will be used as a checked out directory.', '1.0.0')
+    parser.add_argument('-D', '--db-driver', help='Output database driver. Currently only mongoDB is supported',
+                        default='mongo', choices=datastore_choices)
+    parser.add_argument('-d', '--debug', help='Debug level', choices=['INFO', 'DEBUG', 'WARNING', 'ERROR'],
+                        default='INFO')
+    parser.add_argument('-n', '--project-name', help='Name of the project, that is analyzed', required=True)
+    parser.add_argument('--path', help='Path to the checked out repository directory', default=os.getcwd(),
+                        type=readable_dir)
 
     logger.info("Reading out config from command line")
 
@@ -84,20 +76,7 @@ def start():
         logger.error(e)
         sys.exit(1)
 
-    config = Config(args.db_driver, args.db_user,
-                    args.db_password, args.db_database, 
-                    args.db_hostname, args.db_port, args.db_authentication,
-                    args.uri)
-    
-    # If config file was specified, overwrite the values
-    if(args.config_file != None):
-        try:
-            logger.info("Found config file... read configuration file")
-            config.load_from_file(args.config_file)
-        except Exception as e:
-            logger.error(e)
-            sys.exit(1)
-            
-    logger.debug('Read the following config: %s' %(config))
+    read_config = Config(args)
+    logger.debug('Read the following config: %s' % read_config)
 
-    Application(config)
+    Application(read_config)

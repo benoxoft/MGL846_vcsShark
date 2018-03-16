@@ -1,36 +1,32 @@
-'''
-Created on 16.12.2015
-
-@author: fabian
-'''
 from pyvcsshark.datastores.basestore import BaseStore
 
+
 class MySQLStore(BaseStore):
-    '''
-    classdocs
-    '''
-        
-    def initialize(self, dbname=None, host=None, port=None, user=None , 
-                   password=None, projectname=None, repositoryURL=None, type=None, authentication_db=None):
+    def initialize(self, config, repository_url, repository_type):
+        """
+        Initializes the mongostore by connecting to the mongodb, creating the project in the project collection \
+        and setting up processes (see: :class:`pyvcsshark.datastores.mongostore.CommitStorageProcess`, which
+        read commits out of the commitqueue, process them and store them into the mongodb.
+
+        :param config: all configuration
+        :param repository_url: url of the repository, which is to be analyzed
+        :param repository_type: type of the repository, which is to be analyzed (e.g. "git")
+        """
         return
         
     @property
-    def storeIdentifier(self):
-        '''Must return the identifier for the store. This should match the configuration options'''
+    def store_identifier(self):
+        """Must return the identifier for the store. This should match the configuration options"""
         return 'mysql'
 
-    def addCommit(self, commitId=None, branches=set(), tags=set(), parents=[], authorName=None,
-                  authorEmail=None, authorTime=None, authorTimeOffset=None, committerName=None,
-                  committerEmail=None, committerTime=None, committerTimeOffset=None, message=None,
-                  changedFiles=[]):
-        '''Add the commit to the datastore (e.g. mongoDB, mySQL, a model, ...). How this is 
-        handled depends on the implementation'''
+    def add_commit(self, commit_model):
+        """Add the commit to the datastore (e.g. mongoDB, mySQL, a model, ...). How this is
+        handled depends on the implementation"""
         return
 
     def deleteAll(self):
-        '''Deletes all data of one project from the datastore'''
+        """Deletes all data of one project from the datastore"""
         return
     
     def finalize(self):
         return
-        

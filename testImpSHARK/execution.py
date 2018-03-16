@@ -45,7 +45,7 @@ def execute(config, logger, revision, path_to_revision_dump):
 
     error_occured = True
     retry = 0
-    command = Template(orig_command).safe_substitute(python='python3.5')
+    command = Template(orig_command).safe_substitute(python='python2.7')
     while error_occured:
         if retry == 1:
             command = Template(orig_command).safe_substitute(python='python3.5')

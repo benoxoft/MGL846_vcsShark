@@ -62,12 +62,13 @@ class CommitModel(object):
     @branches.setter
     def branches(self, value):
         if(value is not None and type(value) is not set):
-            raise Exception("Branches must be a list!")
+            raise Exception("Branches must be a set!")
         
         if(value is not None):
             for branch in value:
-                if(not isinstance(branch, BranchModel)):
-                    raise Exception("Branch is not a Branch model!")
+                if(not isinstance(branch, BranchModel) and branch is not None):
+                    print(branch)
+                    raise Exception("Branch is not a Branch model or None!")
         
         self._branches = value
     
@@ -78,12 +79,12 @@ class CommitModel(object):
     @tags.setter
     def tags(self, value):
         if(value is not None and type(value) is not list):
-            raise Exception("Hunks must be a list!")
+            raise Exception("Tags must be a list!")
         
         if(value is not None):
             for tag in value:
                 if(not isinstance(tag, TagModel)):
-                    raise Exception("Hunk is not a Hunk model!")
+                    raise Exception("Tag is not a Tag model!")
         
         self._tags = value
     
@@ -273,9 +274,4 @@ class PeopleModel(object):
     def __init__(self, name=None, email=None):
         self.name = name
         self.email = email
-        
-   
-        
-        
-        
-        
+

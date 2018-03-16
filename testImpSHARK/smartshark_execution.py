@@ -10,7 +10,6 @@ import subprocess
 from string import Template
 
 from dataprocessor.configuration import Configuration
-from dataprocessor.repository import Repository
 from testimpshark.common import setup_logging
 
 

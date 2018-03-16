@@ -11,7 +11,7 @@ from mongoengine import connect, Q
 import plotly
 from plotly.graph_objs import Scatter, Layout
 import os
-from testimpshark.mongomodel import Project, Commit, File, TestState, FileAction
+from testimpshark.helpers.mongomodels import *
 from datetime import datetime
 import csv
 

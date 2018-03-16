@@ -4,7 +4,7 @@ import random
 import sys
 from mongoengine import connect, Q
 
-from testimpshark.mongomodel import Project, Commit, File, TestState
+from testimpshark.helpers.mongomodels import *
 
 
 def get_unit_test_developer_think_are_unit(project):

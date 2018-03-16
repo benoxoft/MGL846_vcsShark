@@ -16,7 +16,7 @@ if sys.version_info < (3, 0):
 else:
     from .newmodulefinder.newmodulefinder_python35 import NewModuleFinder, Module
 
-from .mongomodel import File, Project, Commit, TestState
+from testimpshark.helpers.mongomodels import *
 from .common import get_all_immidiate_folders, setup_logging
 
 

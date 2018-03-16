@@ -9,7 +9,7 @@ from pymongo import MongoClient
 from pymongo.errors import DuplicateKeyError
 
 from testimpshark.common import get_all_immidiate_folders
-from testimpshark.evoshark import EvoSHARK
+from testimpshark.testimpshark import TestImpSHARK
 from testimpshark.newmodulefinder.newmodulefinder_python35 import NewModuleFinder
 
 
@@ -35,7 +35,7 @@ class EvoSHARKTest(unittest.TestCase):
                              read_config['db_port'], read_config['db_auth'], read_config['db_user'],
                              read_config['db_password'])
         cls.mock_paths = cls.get_mock_paths(cls)
-        cls.evo_shark = EvoSHARK(output_dir, read_config['url'], read_config['db_database'],
+        cls.evo_shark = TestImpSHARK(output_dir, read_config['url'], read_config['db_database'],
                                  read_config['db_hostname'], read_config['db_port'], read_config['db_auth'],
                                  read_config['db_user'], read_config['db_password'], cls.mock_paths)
 
