@@ -68,7 +68,7 @@ class TestImpSHARK(object):
         """
         return path.replace(input_path+"/", "")
 
-    def get_project_id(self, url):
+    def get_project_id(self, name):
         """
         Gets the project id for the given url
         :param url: url of the project
@@ -76,7 +76,7 @@ class TestImpSHARK(object):
         """
         # find projectid
         try:
-            return Project.objects(url=url).get().id
+            return Project.objects(name=name).get().id
         except DoesNotExist:
             self.logger.error("Project with the url %s does not exist in the database! Execute vcsSHARK first!" % url)
             sys.exit(1)

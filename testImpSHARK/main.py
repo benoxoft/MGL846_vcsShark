@@ -64,6 +64,7 @@ def start():
     parser.add_argument('-a', '--db-authentication', help='Name of the authentication database')
     parser.add_argument('-r', '--rev', help='Revision hash that should be processed', required=True)
     parser.add_argument('-i', '--input', help='Path to the revision in the corresponding hash', required=True)
+    parser.add_argument('-n', '--project-name', help='Name of the project, that is analyzed', required=True)
 
     logger.info("Reading out config from command line")
 

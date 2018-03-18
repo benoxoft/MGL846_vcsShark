@@ -31,7 +31,7 @@ db.createUser(
 
 use vcsshark
 
-db.project.insert({"name": "asciinema"})
+db.project.insert({"name": "git://github.com/asciinema/asciinema.git"})
 
 db.dropUser("root")
 db.createUser( { user: "root",
