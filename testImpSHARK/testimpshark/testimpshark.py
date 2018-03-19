@@ -16,13 +16,15 @@ if sys.version_info < (3, 0):
 else:
     from .newmodulefinder.newmodulefinder_python35 import NewModuleFinder, Module
 
-from testimpshark.helpers.mongomodels import *
+#from testimpshark.helpers.mongomodels import *
+from pycoshark.mongomodels import *
+
 from .common import get_all_immidiate_folders, setup_logging
 
 
 class TestImpSHARK(object):
 
-    def __init__(self, output, url, db_database, db_hostname, db_port, db_auth, db_user, db_password, mock_paths):
+    def __init__(self, output, name, url, db_database, db_hostname, db_port, db_auth, db_user, db_password, mock_paths):
         """
         Main runner of the mecoshark app
 
@@ -33,11 +35,12 @@ class TestImpSHARK(object):
         connect(db_database, host=db_hostname, port=db_port, authentication_source=db_auth,
                 username=db_user, password=db_password, connect=False)
 
+        self.name = name
         self.url = url
         self.logger = logging.getLogger("evoshark")
-        self.project_id = self.get_project_id(url)
+        self.project_id = self.get_project_id(name)
         self.mock_paths = mock_paths
-
+        self.vcs_system_id = VCSSystem.objects(url=url).get().id
         self.regex_for_class_mock_detection = re.compile('\s*(?:@patch\.object|patch\.object)\s*\(\s*([\w\.]*)\s*\,')
         self.regex_for_patch_mock_detection = re.compile("\s*(?:@patch|mock\.patch|patch)\s*\(\s*(?:\'|\")\s*([\w\.]*)")
         self.regex_for_import_detection = re.compile('^from ([\w\.]*) import \(*([\w, \\_]*)')
@@ -78,10 +81,10 @@ class TestImpSHARK(object):
         try:
             return Project.objects(name=name).get().id
         except DoesNotExist:
-            self.logger.error("Project with the url %s does not exist in the database! Execute vcsSHARK first!" % url)
+            self.logger.error("Project with the name %s does not exist in the database! Execute vcsSHARK first!" % name)
             sys.exit(1)
 
-    def get_commit_id(self, project_id, revision_hash):
+    def get_commit_id(self, vcs_system_id, revision_hash):
         """
         Gets the commit id for the corresponding projectid and revision
         :param project_id: id of the project
@@ -89,9 +92,10 @@ class TestImpSHARK(object):
         :return: commit id (ObjectId)
         """
         try:
-            return Commit.objects(projectId=project_id, revisionHash=revision_hash).get().id
+            return Commit.objects(vcs_system_id=vcs_system_id, revision_hash=revision_hash).get().id
+            #return Commit.objects(projectId=project_id, revisionHash=revision_hash).get().id
         except DoesNotExist:
-            self.logger.error("Commit with project_id %s and revision %s does not exist" % (project_id, revision_hash))
+            self.logger.error("Commit with project_id %s and revision %s does not exist" % (vcs_system_id, revision_hash))
             sys.exit(1)
 
     def find_stored_files(self):
@@ -100,7 +104,7 @@ class TestImpSHARK(object):
         :return: dictionary with files[path] = objectid
         """
         stored_files = {}
-        for file in File.objects(projectId=self.project_id).only('path', 'id'):
+        for file in File.objects(vcs_system_id=self.vcs_system_id).only('path', 'id'):
             stored_files[file.path] = file.id
 
         return stored_files
@@ -156,9 +160,9 @@ class TestImpSHARK(object):
         """
         self.logger.info("Processing revision %s" % revision)
 
-        commit_id = self.get_commit_id(self.project_id, revision)
+        commit_id = self.get_commit_id(self.vcs_system_id, revision)
         input_path = self.sanitize_path(input_path)
-        stored_files = self.find_stored_files(input_path)
+        stored_files = self.find_stored_files()
         folders = get_all_immidiate_folders(input_path)
         current_files = self.get_all_files_in_current_revision(input_path)
 
@@ -310,10 +314,16 @@ class TestImpSHARK(object):
         for module in mock_cutoff_dependencies:
             new_mock_cutoff_dep.append(stored_files[self.sanitize_name(module.filename, input_path)])
 
-        file_state = TestState(file_id=stored_files[file], commit_id=commit_id, depends_on=depends_on,
-                               direct_imp=import_direct, file_type='file', long_name=file, error=error,
-                               uses_mock=uses_mock, mocked_modules=new_mocked_modules,
-                               mock_cut_dep=new_mock_cutoff_dep)
+        file_state = TestState(file_id=stored_files[file],
+                               commit_id=commit_id,
+                               depends_on_ids=depends_on,
+                               direct_imp_ids=import_direct,
+                               file_type='file',
+                               long_name=file,
+                               error=error,
+                               uses_mock=uses_mock,
+                               mocked_modules_ids=new_mocked_modules,
+                               mock_cut_dep_ids=new_mock_cutoff_dep)
 
         try:
             file_state.save()

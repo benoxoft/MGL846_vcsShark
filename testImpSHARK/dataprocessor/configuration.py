@@ -3,7 +3,8 @@ import logging
 
 class Configuration(object):
 
-    def __init__(self, url, output_dir, db_user, db_password, db_database, db_hostname, db_port, db_auth, force):
+    def __init__(self, url, name, output_dir, db_user, db_password, db_database, db_hostname, db_port, db_auth, force):
+        self.name = name
         self.logger = logging.getLogger("main")
         self.url = url
         self.output_dir = output_dir
@@ -18,7 +19,7 @@ class Configuration(object):
         if url.endswith('/'):
             url = url[:-1]
 
-        self.project_name = url.rsplit('/', 1)[-1]
+        self.project_name = name
 
     @staticmethod
     def parse_types(types):

@@ -4,7 +4,6 @@ import logging.config
 import os
 import sys
 
-
 from testimpshark.common import setup_logging, get_all_immidiate_folders
 from testimpshark.testimpshark import TestImpSHARK
 
@@ -76,8 +75,16 @@ def start():
 
     mock_paths = detect_mock_paths(logger)
 
-    evoshark = TestImpSHARK(args.output_dir, args.url, args.db_database, args.db_hostname, args.db_port,
-                            args.db_authentication, args.db_user, args.db_password, mock_paths)
+    evoshark = TestImpSHARK(args.output_dir,
+                            args.project_name,
+                            args.url,
+                            args.db_database,
+                            args.db_hostname,
+                            args.db_port,
+                            args.db_authentication,
+                            args.db_user,
+                            args.db_password,
+                            mock_paths)
     evoshark.process_revision(args.rev, args.input)
 if __name__ == "__main__":
     start()

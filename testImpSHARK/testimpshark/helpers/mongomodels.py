@@ -162,7 +162,7 @@ class Project(Document):
 
     # PK uri
     url = StringField(max_length=400, required=True, unique=True)
-    name = StringField(max_length=100, required=True)
+    name = StringField(max_length=200, required=True, unique=True)
     repositoryType = StringField(max_length=15)
 
 
@@ -228,7 +228,7 @@ class Commit(Document):
     }
 
     #PK: projectId and revisionhash
-    projectId = ObjectIdField(required=True)
+    vcs_system_id = ObjectIdField(required=True)
     revisionHash = StringField(max_length=50, required=True, unique_with=['projectId'])
     branches = ListField(StringField(max_length=500))
     tagIds = ListField(ObjectIdField())
