@@ -11,7 +11,8 @@ from mongoengine import connect, Q
 import plotly
 from plotly.graph_objs import Scatter, Layout
 import os
-from testimpshark.helpers.mongomodels import *
+#from testimpshark.helpers.mongomodels import *
+from pycoshark.mongomodels import *
 from datetime import datetime
 import csv
 
@@ -130,8 +131,8 @@ def tests_per_commit(commits):
     plt.show()
 
 
-def get_unit_test_developer_think_are_unit(project):
-    dep_files_unit = File.objects(Q(projectId=project.id) &
+def get_unit_test_developer_think_are_unit(vcssystem):
+    dep_files_unit = File.objects(Q(vcs_system_id=vcssystem.get().id) &
                                   Q(path__not__contains='__init__.py') &
                                   Q(name__icontains='test') & Q(path__endswith='.py') &
                                   Q(path__not__contains='functional') & Q(path__not__contains='support') &
@@ -239,12 +240,14 @@ def get_overview_data(proj, commits):
 start_time = timeit.default_timer()
 
 # Connect to database and choose project
-connect('smartshark', host='141.5.100.156', port=27017, authentication_source='admin', username='root',
-        password='balla1234$')
+connect('vcsshark', host='localhost', port=27017)
 #proj = Project.objects(url="https://github.com/pypa/pip").get()
 #proj = Project.objects(url="https://github.com/numenta/nupic").get()
 #proj = Project.objects(url="https://github.com/ansible/ansible").get()
-proj = Project.objects(url="https://github.com/scikit-learn/scikit-learn").get()
+
+proj = Project.objects(name="asciinema").get()
+vcssystem = VCSSystem.objects(project_id=proj.id)
+
 #proj = Project.objects(url="https://github.com/kevin1024/vcrpy").get()
 #proj = Project.objects(url="https://github.com/nose-devs/nose").get()
 #proj = Project.objects(url="https://github.com/nose-devs/nose2").get()
@@ -256,16 +259,18 @@ proj = Project.objects(url="https://github.com/scikit-learn/scikit-learn").get()
 condensed_plot = True
 
 # We need to get the commits from the main branch
-if proj.url=='https://github.com/ansible/ansible':
-    commits = Commit.objects(projectId=proj.id, branches='refs/heads/devel').order_by('+committerDate')\
-        .only('id', 'committerDate', 'revisionHash', 'message', 'fileActionIds')
-elif proj.url == 'https://github.com/aws/aws-cli':
-    commits = Commit.objects(projectId=proj.id, branches='refs/remotes/origin/master').order_by('+committerDate')\
-        .only('id', 'committerDate', 'revisionHash', 'message', 'fileActionIds')
-else:
-    commits = Commit.objects(projectId=proj.id, branches='refs/heads/master').order_by('+committerDate')\
-        .only('id', 'committerDate', 'revisionHash', 'message', 'fileActionIds')
-
+#if proj.url=='https://github.com/ansible/ansible':
+#    commits = Commit.objects(projectId=proj.id, branches='refs/heads/devel').order_by('+committerDate')\
+#        .only('id', 'committerDate', 'revisionHash', 'message', 'fileActionIds')
+#elif proj.url == 'https://github.com/aws/aws-cli':
+#    commits = Commit.objects(projectId=proj.id, branches='refs/remotes/origin/master').order_by('+committerDate')\
+#        .only('id', 'committerDate', 'revisionHash', 'message', 'fileActionIds')
+#else:
+#    commits = Commit.objects(projectId=proj.id, branches='refs/heads/master').order_by('+committerDate')\
+#        .only('id', 'committerDate', 'revisionHash', 'message', 'fileActionIds')
+commits = Commit.objects(vcs_system_id=vcssystem.get().id,
+                         branches='refs/heads/master').order_by('+committer_date') \
+    .only('id', 'committer_date', 'revision_hash', 'message')
 
 # Further visualizations that can be uncommented
 #get_overview_data(proj, commits)
@@ -276,11 +281,11 @@ else:
 
 # Detect files, that are unit tests in the eyes of the developers. We need to differentiate here, as we
 # are not checking for folder in the scikit learn project, but with the help of the contribution guidelines
-if proj.url == 'https://github.com/scikit-learn/scikit-learn':
-    file_ids_of_unit_tests= get_unit_test_developer_think_are_unit_scikit_learn(proj)
-else:
-    file_ids_of_unit_tests = get_unit_test_developer_think_are_unit(proj)
-
+#if proj.url == 'https://github.com/scikit-learn/scikit-learn':
+#    file_ids_of_unit_tests= get_unit_test_developer_think_are_unit_scikit_learn(proj)
+#else:
+#    file_ids_of_unit_tests = get_unit_test_developer_think_are_unit(proj)
+file_ids_of_unit_tests = get_unit_test_developer_think_are_unit(vcssystem)
 
 # Initialization
 text = []

@@ -67,9 +67,10 @@ Vagrant.configure("2") do |config|
     apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 2930ADAE8CAF5059EE73BB4B58712A2291FA4AD5
     echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.6 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-3.6.list
     apt-get update
-    apt-get install -y git python3-pip python3-cffi libgit2-24 libgit2-dev mongodb-org
+    apt-get install -y python3-tk git python3-pip python3-cffi libgit2-24 libgit2-dev mongodb-org
     python3.5 /vagrant/vcsSHARK/setup.py install
     python3.5 /vagrant/testImpSHARK/setup.py install
+    python3.5 -m pip install plotly seaborn
     service mongod start
     sleep 1
     mongo admin < /vagrant/setupMongoDB.js
