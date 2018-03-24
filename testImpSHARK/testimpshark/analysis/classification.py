@@ -131,16 +131,17 @@ def tests_per_commit(commits):
     plt.show()
 
 
-def get_unit_test_developer_think_are_unit(vcssystem):
-    dep_files_unit = File.objects(Q(vcs_system_id=vcssystem.get().id) &
+def get_unit_test_developer_think_are_unit(vcs_system_id):
+    dep_files_unit = File.objects(Q(vcs_system_id=vcs_system_id) &
                                   Q(path__not__contains='__init__.py') &
-                                  Q(name__icontains='test') & Q(path__endswith='.py') &
+                                  #Q(name__icontains='test') &
+                                  Q(path__endswith='.py') &
                                   Q(path__not__contains='functional') & Q(path__not__contains='support') &
                                   (Q(path__icontains='utest') |
                                   Q(path__icontains='unit'))).only('id', 'path').all()
     for file in dep_files_unit:
         print(file.path)
-    unit_by_path = set([file.id for file in dep_files_unit])
+    unit_by_path = set([file.id for file in dep_files_unit if 'test' in os.path.basename(file.path)])
     return unit_by_path
 
 def get_unit_test_developer_think_are_unit_scikit_learn(project):
@@ -245,8 +246,9 @@ connect('vcsshark', host='localhost', port=27017)
 #proj = Project.objects(url="https://github.com/numenta/nupic").get()
 #proj = Project.objects(url="https://github.com/ansible/ansible").get()
 
-proj = Project.objects(name="asciinema").get()
+proj = Project.objects(name="requests").get()
 vcssystem = VCSSystem.objects(project_id=proj.id)
+vcs_system_id = vcssystem.get().id
 
 #proj = Project.objects(url="https://github.com/kevin1024/vcrpy").get()
 #proj = Project.objects(url="https://github.com/nose-devs/nose").get()
@@ -268,7 +270,7 @@ condensed_plot = True
 #else:
 #    commits = Commit.objects(projectId=proj.id, branches='refs/heads/master').order_by('+committerDate')\
 #        .only('id', 'committerDate', 'revisionHash', 'message', 'fileActionIds')
-commits = Commit.objects(vcs_system_id=vcssystem.get().id,
+commits = Commit.objects(vcs_system_id=vcs_system_id,
                          branches='refs/heads/master').order_by('+committer_date') \
     .only('id', 'committer_date', 'revision_hash', 'message')
 
@@ -285,7 +287,7 @@ commits = Commit.objects(vcs_system_id=vcssystem.get().id,
 #    file_ids_of_unit_tests= get_unit_test_developer_think_are_unit_scikit_learn(proj)
 #else:
 #    file_ids_of_unit_tests = get_unit_test_developer_think_are_unit(proj)
-file_ids_of_unit_tests = get_unit_test_developer_think_are_unit(vcssystem)
+file_ids_of_unit_tests = get_unit_test_developer_think_are_unit(vcs_system_id)
 
 # Initialization
 text = []
@@ -306,7 +308,7 @@ results = {
 
 
 # Use filter on all files of the project
-istqb_filter_files = File.objects(Q(projectId=proj.id) & Q(path__not__contains='__init__.py') &
+istqb_filter_files = File.objects(Q(vcs_system_id=vcs_system_id) & Q(path__not__contains='__init__.py') &
                                      Q(path__not__contains='test') & Q(path__not__contains='util') &
                                      Q(path__not__contains='const') & Q(path__not__contains='backwardcomp') &
                                      Q(path__not__contains='log') & Q(path__not__contains='compat') &
