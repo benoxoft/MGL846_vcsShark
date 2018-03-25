@@ -25,8 +25,14 @@ class MongoStore(BaseStore):
     def __init__(self):
         BaseStore.__init__(self)
 
-    def initialize(self, dbname, host, port, user , password, projectname, repositoryURL, type=None,
-                   authentication_db='admin'):
+    def initialize(self,
+                   dbname,
+                   host,
+                   port,
+                   projectname,
+                   repositoryURL,
+                   type=None,
+                   ):
         """Initializes the mongostore by connecting to the mongodb, creating the project in the project collection \
         and setting up processes (see: :class:`pyvcsshark.datastores.mongostore.CommitStorageProcess`, which
         read commits out of the commitqueue, process them and store them into the mongodb.
@@ -34,12 +40,9 @@ class MongoStore(BaseStore):
         :param dbname: name of the mongo database to use
         :param host: host where the mongodb runs on
         :param port: port where the mongodb server is listening on
-        :param user: user used for authentication
-        :param password: password for the authentication
         :param projectname: name of the project of the repository which is parsed
         :param repositoryURL: url of the repository which is parsed
         :param type: type of the repository which is parsed (e.g. git)
-        :param authentication_db: db where the user is authenticated against
         """
 
         self.repositoryURL = repositoryURL
@@ -49,8 +52,7 @@ class MongoStore(BaseStore):
         self.commitqueue = multiprocessing.JoinableQueue()
         # We define, that the user we authenticate with is in the admin database
         self.logger.info("Connecting to MongoDB...")
-        connect(dbname, username=user, password=password, host=host, port=port, authentication_source=authentication_db,
-                connect=False)
+        connect(dbname, host=host, port=port, connect=False)
 
         # Update project if project with the same url is already in the mongodb and add if not
         project = Project.objects(url=repositoryURL).upsert_one(url=repositoryURL, repositoryType=type, name=projectname)
@@ -63,8 +65,7 @@ class MongoStore(BaseStore):
 
         # Start worker, they will wait till something comes into the queue and then process it
         for i in range(self.NUMBER_OF_PROCESSES):
-            process = CommitStorageProcess(self.commitqueue, project.id, lastCommitDate,  dbname, host, port, user,
-                                           password, authentication_db)
+            process = CommitStorageProcess(self.commitqueue, project.id, lastCommitDate,  dbname, host, port)
             process.daemon=True
             process.start()
 
@@ -133,9 +134,9 @@ class CommitStorageProcess(multiprocessing.Process):
     :param projectId: object id of class :class:`bson.objectid.ObjectId` from the project
     :param lastCommitDate: object of class :class:`datetime.datetime`, which holds the last commit that was parsed
     """
-    def __init__(self, queue, projectId, lastCommitDate, dbname, host, port, user , password, authentication_db):
+    def __init__(self, queue, projectId, lastCommitDate, dbname, host, port):
         multiprocessing.Process.__init__(self)
-        connect(dbname, username=user, password=password, host=host, port=port, authentication_source=authentication_db)
+        connect(dbname, host=host, port=port)
         self.queue = queue
         self.projectId = projectId
         self.lastCommitDate = lastCommitDate

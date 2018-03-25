@@ -30,6 +30,9 @@ db.createUser(
 )
 
 use vcsshark
+
+db.project.insert({"name": "requests"})
+
 db.dropUser("root")
 db.createUser( { user: "root",
                  pwd: "root",

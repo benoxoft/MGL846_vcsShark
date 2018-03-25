@@ -68,13 +68,11 @@ def start():
     parser.add_argument('-v', '--version', help='Shows the version', action='version', version='0.0.1')
     parser.add_argument('-f', '--config-file', help='Path to a custom configuration file', default=None)
     parser.add_argument('-D', '--db-driver', help='Output database driver. Currently only mongoDB is supported', default='mongo', choices=datastoreChoices)
-    parser.add_argument('-U', '--db-user', help='Database user name', default='root')
-    parser.add_argument('-P', '--db-password', help='Database user password', default='root')
     parser.add_argument('-DB', '--db-database', help='Database name', default='smartshark')
     parser.add_argument('-H', '--db-hostname', help='Name of the host, where the database server is running', default='localhost')
     parser.add_argument('-p', '--db-port', help='Port, where the database server is listening', default=27017, type=int)
-    parser.add_argument('-a', '--db-authentication', help='Name of the authentication database')
-    parser.add_argument('-u', '--uri', help='Path to the checked out repository directory', default=os.getcwd(), type=readable_dir)
+    parser.add_argument('--path', help='Path to the checked out repository directory', default=os.getcwd(), type=readable_dir)
+    parser.add_argument('-n', '--project-name', help='Name of the project, that is analyzed', required=True)
 
     logger.info("Reading out config from command line")
 
@@ -84,10 +82,13 @@ def start():
         logger.error(e)
         sys.exit(1)
 
-    config = Config(args.db_driver, args.db_user,
-                    args.db_password, args.db_database, 
-                    args.db_hostname, args.db_port, args.db_authentication,
-                    args.uri)
+    config = Config(args.project_name,
+                    args.db_driver,
+                    args.db_database,
+                    args.db_hostname,
+                    args.db_port,
+                    args.path
+                    )
     
     # If config file was specified, overwrite the values
     if(args.config_file != None):
@@ -97,7 +98,5 @@ def start():
         except Exception as e:
             logger.error(e)
             sys.exit(1)
-            
-    logger.debug('Read the following config: %s' %(config))
 
     Application(config)

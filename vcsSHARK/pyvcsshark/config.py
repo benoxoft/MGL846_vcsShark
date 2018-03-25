@@ -21,17 +21,21 @@ class Config(object):
     :param uri: path to the repository
     """
     
-    def __init__(self, db_driver="mongo", db_user="root", db_password="root", db_database="vcsSHARK",
-                 db_hostname="localhost", db_port=27017, db_authentication='admin', uri="."):
+    def __init__(self,
+                 project_name,
+                 db_driver="mongo",
+                 db_database="vcsSHARK",
+                 db_hostname="localhost",
+                 db_port=27017,
+                 path="."
+                 ):
 
+        self.project_name = project_name
         self.db_driver = db_driver
-        self.db_user = db_user
-        self.db_password = db_password
         self.db_database = db_database
         self.db_hostname = db_hostname
         self.db_port = int(db_port)
-        self.db_authentication = db_authentication
-        self.uri = uri.rstrip('/')
+        self.uri = path.rstrip('/')
         
     
     def _str2bool(self, v):
@@ -87,12 +91,3 @@ class Config(object):
            
         except Exception as e:
             raise Exception('Failed in reading config file %s. Original message: %s' % (config_file, e))
-
-    def __str__(self):
-        return "<Config(uri='%s', db_driver='%s', db_user='%s', db_password='%s', "\
-               "db_database='%s', db_hostname='%s', db_port='%s', db_authentication='%s'" % \
-               (self.uri, self.db_driver, self.db_user, self.db_password, self.db_database,
-                self.db_hostname, self.db_port, self.db_authentication)
-               
-               
-               

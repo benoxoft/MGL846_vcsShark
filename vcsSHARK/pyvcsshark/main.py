@@ -50,9 +50,13 @@ class Application(object):
         # Set projectName, url and repository type, as they
         # are most likely required for storing into a datastore (e.g. creating a project table)
         parser.initialize()
-        datastore.initialize(self.config.db_database, self.config.db_hostname, self.config.db_port,
-                             self.config.db_user, self.config.db_password, parser.getProjectName(),
-                             parser.getProjectURL(), parser.repositoryType, self.config.db_authentication)
+        datastore.initialize(self.config.db_database,
+                             self.config.db_hostname,
+                             self.config.db_port,
+                             parser.getProjectName(),
+                             parser.getProjectURL(),
+                             parser.repositoryType,
+                             )
         parser.parse(self.config.uri, datastore)
         parser.finalize()
         datastore.finalize()
