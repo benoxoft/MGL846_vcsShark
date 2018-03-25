@@ -56,14 +56,12 @@ def start():
                         required=True)
     parser.add_argument('-out', '--output_dir', help='Directory, which can be used as output.',
                         required=True, type=writable_dir)
-    parser.add_argument('-U', '--db-user', help='Database user name', default='root')
-    parser.add_argument('-P', '--db-password', help='Database user password', default='root')
     parser.add_argument('-DB', '--db-database', help='Database name', default='smartshark')
     parser.add_argument('-H', '--db-hostname', help='Name of the host, where the database server is running', default='localhost')
     parser.add_argument('-p', '--db-port', help='Port, where the database server is listening', default=27017, type=int)
-    parser.add_argument('-a', '--db-authentication', help='Name of the authentication database')
     parser.add_argument('-r', '--rev', help='Revision hash that should be processed', required=True)
     parser.add_argument('-i', '--input', help='Path to the revision in the corresponding hash', required=True)
+    parser.add_argument('-n', '--project-name', help='Name of the project, that is analyzed', required=True)
 
     logger.info("Reading out config from command line")
 
@@ -75,8 +73,14 @@ def start():
 
     mock_paths = detect_mock_paths(logger)
 
-    evoshark = TestImpSHARK(args.output_dir, args.url, args.db_database, args.db_hostname, args.db_port,
-                        args.db_authentication, args.db_user, args.db_password, mock_paths)
+    evoshark = TestImpSHARK(args.project_name,
+                            args.output_dir,
+                            args.url,
+                            args.db_database,
+                            args.db_hostname,
+                            args.db_port,
+                            mock_paths
+                            )
     evoshark.process_revision(args.rev, args.input)
 if __name__ == "__main__":
     start()

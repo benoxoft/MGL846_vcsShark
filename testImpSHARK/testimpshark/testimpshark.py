@@ -22,7 +22,15 @@ from .common import get_all_immidiate_folders, setup_logging
 
 class TestImpSHARK(object):
 
-    def __init__(self, output, url, db_database, db_hostname, db_port, db_auth, db_user, db_password, mock_paths):
+    def __init__(self,
+                 project_name,
+                 output,
+                 url,
+                 db_database,
+                 db_hostname,
+                 db_port,
+                 mock_paths
+                 ):
         """
         Main runner of the mecoshark app
 
@@ -30,10 +38,14 @@ class TestImpSHARK(object):
         setup_logging()
 
         # connect to mongodb
-        connect(db_database, host=db_hostname, port=db_port, authentication_source=db_auth,
-                username=db_user, password=db_password, connect=False)
+        connect(db_database,
+                host=db_hostname,
+                port=db_port,
+                connect=False
+                )
 
         self.url = url
+        self.project_name = project_name
         self.logger = logging.getLogger("evoshark")
         self.project_id = self.get_project_id(url)
         self.mock_paths = mock_paths
@@ -158,7 +170,8 @@ class TestImpSHARK(object):
 
         commit_id = self.get_commit_id(self.project_id, revision)
         input_path = self.sanitize_path(input_path)
-        stored_files = self.find_stored_files(input_path)
+        #stored_files = self.find_stored_files(input_path)
+        stored_files = self.find_stored_files()
         folders = get_all_immidiate_folders(input_path)
         current_files = self.get_all_files_in_current_revision(input_path)
 

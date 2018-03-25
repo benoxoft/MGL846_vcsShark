@@ -13,8 +13,8 @@ class Repository(object):
         self.repository = None
 
         # Get name of the project (last part of the output path)
-        self.project_name = os.path.basename(os.path.normpath(self.config.output_dir))
-        self.clone_path = os.path.join(config.output_dir, 'base')
+        self.project_name = self.config.project_name
+        self.clone_path = os.path.join(config.output_dir, self.config.project_name)
 
     def clone_repository(self):
         shutil.rmtree(self.clone_path, True)

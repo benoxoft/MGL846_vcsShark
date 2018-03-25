@@ -38,17 +38,24 @@ def execute(config, logger, revision, path_to_revision_dump):
     :param path_to_revision_dump: path to the revision
     :return:
     """
-    orig_command = '$python %s -u %s -out %s -U %s -P %s -DB %s -H %s -p %s -a %s -r %s -i %s' % \
-                  (os.path.dirname(__file__)+"/main.py", config.url, config.output_dir, config.db_user,
-                   config.db_password, config.db_database, config.db_hostname, config.db_port, config.db_auth,
-                   revision, path_to_revision_dump)
+    orig_command = '$python %s -u %s -out %s -DB %s -H %s -p %s -r %s -i %s -n %s' % \
+                  (os.path.dirname(__file__)+"/main.py",
+                   config.url,
+                   config.output_dir,
+                   config.db_database,
+                   config.db_hostname,
+                   config.db_port,
+                   revision,
+                   path_to_revision_dump,
+                   config.project_name,
+                   )
 
     error_occured = True
     retry = 0
     command = Template(orig_command).safe_substitute(python='python3.5')
     while error_occured:
         if retry == 1:
-            command = Template(orig_command).safe_substitute(python='python3.5')
+            command = Template(orig_command).safe_substitute(python='python2.7')
 
         if retry > 1:
             logger.error('Revision was not processed: %s' % revision)
@@ -76,13 +83,11 @@ def start():
                         required=True)
     parser.add_argument('-out', '--output_dir', help='Directory, which can be used as output.',
                         required=True, type=writable_dir)
-    parser.add_argument('-U', '--db-user', help='Database user name', default='root')
-    parser.add_argument('-P', '--db-password', help='Database user password', default='root')
     parser.add_argument('-DB', '--db-database', help='Database name', default='smartshark')
     parser.add_argument('-H', '--db-hostname', help='Name of the host, where the database server is running', default='localhost')
     parser.add_argument('-p', '--db-port', help='Port, where the database server is listening', default=27017, type=int)
-    parser.add_argument('-a', '--db-authentication', help='Name of the authentication database')
     parser.add_argument('-f', '--force', help='Forces the renewing of all revisions.', action='store_true')
+    parser.add_argument('-n', '--project-name', help='Name of the project, that is analyzed', required=True)
 
     logger.info("Reading out config from command line")
 
@@ -92,10 +97,14 @@ def start():
         logger.error(e)
         sys.exit(1)
 
-    config = Configuration(args.url, args.output_dir, args.db_user, args.db_password, args.db_database, args.db_hostname,
-                           args.db_port, args.db_authentication, args.force)
-
-    logger.debug('Read the following config: %s' % config)
+    config = Configuration(args.project_name,
+                           args.url,
+                           args.output_dir,
+                           args.db_database,
+                           args.db_hostname,
+                           args.db_port,
+                           args.force
+                           )
 
     # Set repository and clone newest one
     repository = Repository(config)
