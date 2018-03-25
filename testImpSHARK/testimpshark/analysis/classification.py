@@ -11,7 +11,7 @@ from mongoengine import connect, Q
 import plotly
 from plotly.graph_objs import Scatter, Layout
 import os
-from testimpshark.mongomodel import Project, Commit, File, TestState, FileAction
+from testImpSHARK.testimpshark.mongomodel import Project, Commit, File, TestState, FileAction
 from datetime import datetime
 import csv
 
@@ -239,19 +239,21 @@ def get_overview_data(proj, commits):
 start_time = timeit.default_timer()
 
 # Connect to database and choose project
-connect('smartshark', host='141.5.100.156', port=27017, authentication_source='admin', username='root',
-        password='balla1234$')
+connect('vcsshark',
+        host='localhost',
+        port=27017,
+        )
 #proj = Project.objects(url="https://github.com/pypa/pip").get()
 #proj = Project.objects(url="https://github.com/numenta/nupic").get()
 #proj = Project.objects(url="https://github.com/ansible/ansible").get()
-proj = Project.objects(url="https://github.com/scikit-learn/scikit-learn").get()
+#proj = Project.objects(url="https://github.com/scikit-learn/scikit-learn").get()
 #proj = Project.objects(url="https://github.com/kevin1024/vcrpy").get()
 #proj = Project.objects(url="https://github.com/nose-devs/nose").get()
 #proj = Project.objects(url="https://github.com/nose-devs/nose2").get()
 #proj = Project.objects(url="https://github.com/pypa/warehouse").get()
 #proj = Project.objects(url="https://github.com/aws/aws-cli").get()
 #proj = Project.objects(url="https://github.com/robotframework/robotframework").get()
-
+proj = Project.objects(url="git://github.com/requests/requests.git").get()
 # Show only a small number of categories if TRUE
 condensed_plot = True
 
@@ -489,8 +491,8 @@ ax.set_position([box.x0, box.y0 + box.height * 0.05,
 # Put a legend below current axis
 ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.1),
           fancybox=True, shadow=True, ncol=5)
-plt.show()
-
+#plt.show()
+plt.savefig('/vagrant/fig.png')
 
 
 
