@@ -31,7 +31,8 @@ db.createUser(
 
 use vcsshark
 
-db.project.insert({"name": "requests"})
+//db.project.insert({"name": "requests"})
+db.project.insert({"name": "ansible"})
 
 db.dropUser("root")
 db.createUser( { user: "root",
