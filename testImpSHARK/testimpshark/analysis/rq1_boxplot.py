@@ -54,4 +54,5 @@ fig = plt.figure(1, figsize=(9, 6))
 ax = seaborn.boxplot(x="Project", y="#Tests in Category", hue="Category", data=data_frame)
 
 # Create the boxplot
-plt.show()
+#plt.show()
+plt.savefig('/vagrant/rq1_boxplot.png')

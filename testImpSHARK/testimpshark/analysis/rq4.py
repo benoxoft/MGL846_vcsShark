@@ -81,7 +81,8 @@ for f in files:
 
         # matplotlib
         fig.canvas.mpl_connect('pick_event', onpick3)
-        plt.show()
+        plt.savefig('/vagrant/rq4_' + project + '.png')
+        #plt.show()
 
 # Boxplot
 data_frame = DataFrame(data=boxplot_results)
@@ -91,4 +92,5 @@ fig = plt.figure(1, figsize=(9, 6))
 ax = seaborn.boxplot(x="project", y="value", hue="type", data=data_frame)
 
 # Create the boxplot
-plt.show()
+#plt.show()
+plt.savefig('/vagrant/rq4_boxplot.png')

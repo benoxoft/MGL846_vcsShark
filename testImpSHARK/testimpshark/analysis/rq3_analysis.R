@@ -1,5 +1,5 @@
 # Adjust to your working environment
-setwd('/home/ftrauts/Arbeit/smartshark2.0/unit_integration_python/evoshark/analysis/data')
+setwd('/vagrant/testImpSHARK/testimpshark/analysis/data')
 
 # Adjust to the project
 data = read.csv("warehouse_raw_data.csv", header=TRUE)

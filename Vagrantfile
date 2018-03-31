@@ -13,7 +13,7 @@ Vagrant.configure("2") do |config|
   # Every Vagrant development environment requires a box. You can search for
   # boxes at https://vagrantcloud.com/search.
   config.vm.box = "ubuntu/xenial64"
-
+  config.disksize.size = '45GB'
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
   # `vagrant box outdated`. This is not recommended.
@@ -54,8 +54,8 @@ Vagrant.configure("2") do |config|
   #   vb.gui = true
   #
   #   # Customize the amount of memory on the VM:
-    vb.memory = "4096"
-    vb.cpus = "2"
+    vb.memory = "6096"
+    vb.cpus = "4"
   end
   #
   # View the documentation for the provider you are using for more
@@ -68,7 +68,7 @@ Vagrant.configure("2") do |config|
     apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 2930ADAE8CAF5059EE73BB4B58712A2291FA4AD5
     echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.6 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-3.6.list
     apt-get update
-    apt-get install -y python2.7 python2.7-setuptools python3-tk git python3-pip python3-cffi libgit2-24 libgit2-dev mongodb-org
+    apt-get install -y python2.7 python2.7-setuptools python3-tk git python3-pip python3-cffi libgit2-24 libgit2-dev mongodb-org r-base
     python3.5 /vagrant/vcsSHARK/setup.py install
     python3.5 /vagrant/testImpSHARK/setup.py install
     python3.5 -m pip install plotly seaborn
